@@ -1,9 +1,10 @@
-require("dotenv");
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const userRoute = require("./routes/userRoutes");
-require("./db");
+const fileRoute = require("./routes/fileRoutes");
+require("./config/db");
 
 app.use(cors({
       origin: "http://localhost:5173",
@@ -12,6 +13,6 @@ app.use(cors({
 app.use(express.json());
 
 app.get("/", (req, res) => res.send("Server is running"));
-app.use("/api", userRoute);
+app.use("/api", [userRoute, fileRoute]);
 
-app.listen(8080, () => console.log("listening on port 8080"));
+app.listen(process.env.PORT, () => console.log("listening on port 8080"));
