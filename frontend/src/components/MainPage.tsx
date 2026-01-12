@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileGrid from "./FileGrid";
 import OptionsNav from "./OptionsNav";
 import type { FileItem } from "../types";
+import CollapsibleSidebar from "./CollapsibleSidebar";
+import ResizablePanels from "./ResizablePanels";
 
 const filesData: FileItem[] = [
   {
@@ -57,13 +59,28 @@ const filesData: FileItem[] = [
 
 const MainPage = () => {
 
-  const [files, setFiles] = useState<FileItem[]>(filesData);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div>
+
+      <div className="flex h-screen w-full overflow-hidden">
+        <CollapsibleSidebar
+          open={sidebarOpen}
+          setOpen={setSidebarOpen}
+        />
+
+        <div className="flex-1 h-full overflow-hidden">
+          <ResizablePanels />
+        </div>
+      </div>
+
+
+
+
       {/* button options */}
-      <OptionsNav />
-      <FileGrid files={files} setFiles={setFiles} />
+      {/* <OptionsNav />
+      <FileGrid files={files} setFiles={setFiles} /> */}
     </div>
   )
 }
