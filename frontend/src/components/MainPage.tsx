@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import FileGrid from "./FileGrid";
 import OptionsNav from "./OptionsNav";
 import type { FileItem } from "../types";
 import CollapsibleSidebar from "./CollapsibleSidebar";
 import ResizablePanels from "./ResizablePanels";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { LiaRecycleSolid } from "react-icons/lia";
 
 const filesData: FileItem[] = [
   {
@@ -60,6 +62,7 @@ const filesData: FileItem[] = [
 const MainPage = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const fileInputRef = useRef(null);
 
   return (
     <div>
@@ -70,7 +73,35 @@ const MainPage = () => {
           setOpen={setSidebarOpen}
         />
 
-        <div className="flex-1 h-full overflow-hidden">
+        <div className="flex-1 flex-col h-full overflow-hidden">
+          <div className="flex items-center justify-between p-3 px-4 bg-[#202020]">
+            <span>LOGO</span>
+            <div className="flex items-center gap-3">
+              <button className="p-[1.5px] relative cursor-pointer group">
+                <div
+                  className="
+                    relative
+                    p-2 px-3
+                    rounded
+                    flex items-center justify-start
+                    w-full
+                    text-left
+                    text-[12px]
+                    font-medium
+                    text-white
+                    bg-indigo-500
+                    group-hover:bg-indigo-500/80
+                    group-hover:text-white/80
+                  "
+                >
+                  Add More
+                </div>
+              </button>
+              <div className="rounded bg-[#ff5b5b] hover:bg-[#ff5b5b]/80 cursor-pointer p-[8px]">
+                <LiaRecycleSolid />
+              </div>
+            </div>
+          </div>
           <ResizablePanels />
         </div>
       </div>

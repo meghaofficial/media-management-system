@@ -9,11 +9,11 @@ export default function ResizablePanels() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // panel widths (px)
-  const htmlW = useRef(0);
-  const cssW = useRef(0);
-  const jsW = useRef(0);
+  const folderW = useRef(0);
+  const imageW = useRef(0);
+  const duplicateW = useRef(0);
 
-  const active = useRef<"html" | "js" | null>(null);
+  const active = useRef<"folder" | "duplicate" | null>(null);
   const lastX = useRef(0);
 
   const [, force] = useState(0);
@@ -25,7 +25,7 @@ export default function ResizablePanels() {
     const width = entries[0].contentRect.width;
     const total = width - RESIZER * 2;
 
-    htmlW.current = cssW.current = jsW.current = total / 3;
+    folderW.current = imageW.current = duplicateW.current = total / 3;
     force(v => v + 1);
   });
 
@@ -41,44 +41,44 @@ export default function ResizablePanels() {
       let dx = e.clientX - lastX.current;
       lastX.current = e.clientX;
 
-      /* ===== HTML EDGE ===== */
-      if (active.current === "html") {
+      /* ===== folder EDGE ===== */
+      if (active.current === "folder") {
         if (dx > 0) {
-          let take = Math.min(cssW.current - MIN, dx);
-          cssW.current -= take;
-          htmlW.current += take;
+          let take = Math.min(imageW.current - MIN, dx);
+          imageW.current -= take;
+          folderW.current += take;
           dx -= take;
 
           if (dx > 0) {
-            take = Math.min(jsW.current - MIN, dx);
-            jsW.current -= take;
-            htmlW.current += take;
+            take = Math.min(duplicateW.current - MIN, dx);
+            duplicateW.current -= take;
+            folderW.current += take;
           }
         } else {
-          let give = Math.min(htmlW.current - MIN, -dx);
-          htmlW.current -= give;
-          cssW.current += give;
+          let give = Math.min(folderW.current - MIN, -dx);
+          folderW.current -= give;
+          imageW.current += give;
         }
       }
 
-      /* ===== JS EDGE ===== */
-      if (active.current === "js") {
+      /* ===== duplicate EDGE ===== */
+      if (active.current === "duplicate") {
         if (dx < 0) {
           dx = -dx;
-          let take = Math.min(cssW.current - MIN, dx);
-          cssW.current -= take;
-          jsW.current += take;
+          let take = Math.min(imageW.current - MIN, dx);
+          imageW.current -= take;
+          duplicateW.current += take;
           dx -= take;
 
           if (dx > 0) {
-            take = Math.min(htmlW.current - MIN, dx);
-            htmlW.current -= take;
-            jsW.current += take;
+            take = Math.min(folderW.current - MIN, dx);
+            folderW.current -= take;
+            duplicateW.current += take;
           }
         } else {
-          let give = Math.min(jsW.current - MIN, dx);
-          jsW.current -= give;
-          cssW.current += give;
+          let give = Math.min(duplicateW.current - MIN, dx);
+          duplicateW.current -= give;
+          imageW.current += give;
         }
       }
 
@@ -103,40 +103,40 @@ export default function ResizablePanels() {
       className="relative h-full w-full bg-[#0f1117] overflow-hidden"
     >
       <Panel
-        title="HTML"
+        title="Folders"
         left={0}
-        width={htmlW.current}
-        collapsed={collapsed(htmlW.current)}
+        width={folderW.current}
+        collapsed={collapsed(folderW.current)}
       />
 
       <Resizer
-        left={htmlW.current}
+        left={folderW.current}
         onDown={x => {
-          active.current = "html";
+          active.current = "folder";
           lastX.current = x;
         }}
       />
 
       <Panel
-        title="CSS"
-        left={htmlW.current + RESIZER}
-        width={cssW.current}
-        collapsed={collapsed(cssW.current)}
+        title="Images"
+        left={folderW.current + RESIZER}
+        width={imageW.current}
+        collapsed={collapsed(imageW.current)}
       />
 
       <Resizer
-        left={htmlW.current + cssW.current + RESIZER}
+        left={folderW.current + imageW.current + RESIZER}
         onDown={x => {
-          active.current = "js";
+          active.current = "duplicate";
           lastX.current = x;
         }}
       />
 
       <Panel
-        title="JS"
-        left={htmlW.current + cssW.current + RESIZER * 2}
-        width={jsW.current}
-        collapsed={collapsed(jsW.current)}
+        title="Duplicates"
+        left={folderW.current + imageW.current + RESIZER * 2}
+        width={duplicateW.current}
+        collapsed={collapsed(duplicateW.current)}
       />
     </div>
   );
@@ -171,8 +171,10 @@ function Panel({
         {title}
       </motion.div>
 
+      <div className="w-full border-b-2 border-[#2a2a2a] absolute top-11"></div>
+
       <motion.div
-        className="pt-10 px-4"
+        className="pt-14 px-4"
         animate={{ opacity: collapsed ? 0 : 1 }}
         transition={{ duration: 0.2 }}
         style={{ pointerEvents: collapsed ? "none" : "auto" }}

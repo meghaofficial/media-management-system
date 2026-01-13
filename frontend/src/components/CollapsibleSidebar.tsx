@@ -21,8 +21,6 @@ export default function CollapsibleSidebar({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
 
-  const [activeTab, setActiveTab] = useState<String>("Default");
-
   const [tabsDetails, setTabsDetails] = useState<TabDetail[]>([
     { name: "Default", isActive: true, isLoading: false },
     { name: "Faces", isActive: false, isLoading: false },
@@ -84,35 +82,5 @@ export default function CollapsibleSidebar({
         </nav>
       </motion.aside>
     </div>
-  );
-}
-
-/* ---------- SIDEBAR ITEM ---------- */
-function SidebarItem({
-  icon,
-  label,
-  open,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  open: boolean;
-}) {
-  return (
-    <button
-      className="flex items-center h-11 px-4 w-full hover:bg-white/5 transition"
-    >
-      <span className="text-lg">{icon}</span>
-
-      <motion.span
-        animate={{
-          opacity: open ? 1 : 0,
-          x: open ? 0 : -10,
-        }}
-        transition={{ duration: 0.2 }}
-        className="ml-3 text-sm whitespace-nowrap"
-      >
-        {label}
-      </motion.span>
-    </button>
   );
 }
