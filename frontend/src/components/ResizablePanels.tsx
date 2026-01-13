@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { GoGrabber } from "react-icons/go";
 
 const MIN = 40;
 const RESIZER = 6;
@@ -155,7 +156,7 @@ function Panel({
 }) {
   return (
     <div
-      className="absolute top-0 bottom-0 bg-[#1a1c23] text-white overflow-hidden select-none"
+      className="absolute top-0 bottom-0 bg-[#191919] text-white overflow-hidden select-none"
       style={{ left, width }}
     >
       <motion.div
@@ -192,10 +193,13 @@ function Resizer({
 }) {
   return (
     <div
-      className="absolute top-0 bottom-0 w-1.5 bg-[#2a2d36]
-                 cursor-col-resize z-10 hover:bg-[#4c4f5a]"
+      className="absolute top-0 bottom-0 w-2 bg-[#2a2a2a]
+                 cursor-col-resize z-10 flex items-center justify-center"
       style={{ left }}
       onMouseDown={(e) => onDown(e.clientX)}
-    />
+    >
+      <GoGrabber size={200} />
+      {/* 2a2a2a */}
+      </div>
   );
 }
