@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { FiMenu } from "react-icons/fi";
 import Tab from "../ReusableComponents/Tab";
 import { useState } from "react";
-import Arrangements from "./Arrangements";
+import Arrangements from "../components/Arrangements";
 
 const SIDEBAR_WIDTH = 240;
 const COLLAPSED_WIDTH = 56;

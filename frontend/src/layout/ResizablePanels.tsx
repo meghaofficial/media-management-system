@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { GoGrabber } from "react-icons/go";
+import { GoGrabber, GoPlus } from "react-icons/go";
+import FoldersPanel from "../panels/FoldersPanel";
+import ImagesPanel from "../panels/ImagesPanel";
+import DuplicatesPanel from "../panels/DuplicatesPanel";
 
 const MIN = 40;
 const RESIZER = 6;
@@ -19,19 +22,19 @@ export default function ResizablePanels() {
   const [, force] = useState(0);
 
   useEffect(() => {
-  if (!containerRef.current) return;
+    if (!containerRef.current) return;
 
-  const observer = new ResizeObserver(entries => {
-    const width = entries[0].contentRect.width;
-    const total = width - RESIZER * 2;
+    const observer = new ResizeObserver(entries => {
+      const width = entries[0].contentRect.width;
+      const total = width - RESIZER * 2;
 
-    folderW.current = imageW.current = duplicateW.current = total / 3;
-    force(v => v + 1);
-  });
+      folderW.current = imageW.current = duplicateW.current = total / 3;
+      force(v => v + 1);
+    });
 
-  observer.observe(containerRef.current);
-  return () => observer.disconnect();
-}, []);
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   /* ---------- DRAG LOGIC (UNCHANGED) ---------- */
   useEffect(() => {
@@ -103,7 +106,7 @@ export default function ResizablePanels() {
       className="relative h-full w-full bg-[#0f1117] overflow-hidden"
     >
       <Panel
-        title="Folders"
+        title="Collections"
         left={0}
         width={folderW.current}
         collapsed={collapsed(folderW.current)}
@@ -160,7 +163,7 @@ function Panel({
       style={{ left, width }}
     >
       <motion.div
-        className="absolute font-bold left-3"
+        className="absolute font-bold left-3 flex items-center justify-between w-[95%]"
         animate={{
           rotate: collapsed ? -90 : 0,
           top: collapsed ? "50%" : "10px",
@@ -168,7 +171,15 @@ function Panel({
         transition={{ duration: 0.3 }}
         style={{ transformOrigin: "left center" }}
       >
-        {title}
+        <span>{title}</span>
+
+        {/* Add button for folders */}
+        {title === "Collections" && !collapsed && (
+          <div className="rounded bg-[#4ade80] hover:bg-[#4ade80]/80 cursor-pointer p-[5px] text-black hover:text-white">
+            <GoPlus />
+          </div>
+        )}
+
       </motion.div>
 
       <div className="w-full border-b-2 border-[#2a2a2a] absolute top-11"></div>
@@ -179,7 +190,9 @@ function Panel({
         transition={{ duration: 0.2 }}
         style={{ pointerEvents: collapsed ? "none" : "auto" }}
       >
-        {title} Content
+        {title === "Collections" && <FoldersPanel />}
+        {title === "Images" && <ImagesPanel />}
+        {title === "Duplicates" && <DuplicatesPanel />}
       </motion.div>
     </div>
   );
@@ -195,13 +208,12 @@ function Resizer({
 }) {
   return (
     <div
-      className="absolute top-0 bottom-0 w-2 bg-[#2a2a2a]
-                 cursor-col-resize z-10 flex items-center justify-center"
+      className="absolute top-0 bottom-0 w-2 bg-[#2a2a2a] cursor-col-resize z-10 flex items-center justify-center"
       style={{ left }}
       onMouseDown={(e) => onDown(e.clientX)}
     >
       <GoGrabber size={200} />
       {/* 2a2a2a */}
-      </div>
+    </div>
   );
 }

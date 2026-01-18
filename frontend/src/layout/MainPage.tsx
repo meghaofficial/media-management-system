@@ -1,11 +1,8 @@
 import { useRef, useState } from "react";
-import FileGrid from "./FileGrid";
-import OptionsNav from "./OptionsNav";
 import type { FileItem } from "../types";
-import CollapsibleSidebar from "./CollapsibleSidebar";
 import ResizablePanels from "./ResizablePanels";
-import { RiDeleteBin6Line } from "react-icons/ri";
 import { LiaRecycleSolid } from "react-icons/lia";
+import CollapsibleSidebar from "./CollapsibleSidebar";
 
 const filesData: FileItem[] = [
   {
@@ -74,7 +71,7 @@ const MainPage = () => {
         />
 
         <div className="flex-1 flex-col h-full overflow-hidden">
-          <div className="flex items-center justify-between p-3 px-4 bg-[#202020]">
+          <div className="flex items-center justify-between p-3 px-4 bg-[#202020] select-none">
             <span>LOGO</span>
             <div className="flex items-center gap-3">
               <button className="p-[1.5px] relative cursor-pointer group">
