@@ -4,6 +4,7 @@ const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { v4: uuidv4 } = require("uuid");
 const { uploadMultipleToS3 } = require("../services/s3Upload.js");
 const Image = require("../models/Image.js");
+const { extractImageMeta } = require("../utils/helper.js");
 
 const uploadToS3 = async (file) => {
   const key = `uploads/${Date.now()}-${file.originalname}`;
@@ -61,7 +62,6 @@ const getTheFile = async (req, res) => {
 
 const uploadMultipleFiles = async (req, res) => {
   try {
-    // 1️⃣ Read sessionId properly
     const sessionId = req.headers["x-session-id"];
 
     if (!sessionId) {
@@ -72,17 +72,43 @@ const uploadMultipleFiles = async (req, res) => {
       return res.status(400).json({ message: "No files uploaded" });
     }
 
+    // 1️⃣ Extract EXIF metadata (parallel)
+    const exifDataList = await Promise.all(
+      req.files.map(async (file) => {
+        try {
+          return await extractImageMeta(file.buffer);
+        } catch {
+          return null;
+        }
+      })
+    );
+
     // 2️⃣ Upload files to S3
     const uploadedFiles = await uploadMultipleToS3(req.files, sessionId);
 
-    // 3️⃣ Prepare Mongo documents
-    const imageDocs = uploadedFiles.map((file) => ({
-      sessionId,
-      s3Key: file.key,
-      originalName: file.name,
-      mimeType: file.type,
-      sizeBytes: file.size,
-    }));
+    // 3️⃣ Prepare Mongo documents (merge S3 + EXIF)
+    const imageDocs = uploadedFiles.map((file, index) => {
+      const exif = exifDataList[index] || {};
+
+      return {
+        sessionId,
+        s3Key: file.key,
+        originalName: file.name,
+        mimeType: file.type,
+        sizeBytes: file.size,
+
+        // EXIF date
+        takenAt: exif?.DateTimeOriginal || null,
+
+        // EXIF location (if exists)
+        location: exif?.latitude && exif?.longitude
+          ? {
+              lat: exif.latitude,
+              lng: exif.longitude
+            }
+          : undefined
+      };
+    });
 
     // 4️⃣ Save metadata
     await Image.insertMany(imageDocs);
@@ -91,14 +117,14 @@ const uploadMultipleFiles = async (req, res) => {
     res.status(200).json({
       success: true,
       files: uploadedFiles,
-      sessionId,
+      sessionId
     });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: "Internal Server Error"
     });
   }
 };
@@ -145,6 +171,5 @@ const getAllFiles = async (req, res) => {
     });
   }
 };
-
 
 module.exports = { uploadFile, getTheFile, uploadMultipleFiles, getAllFiles };

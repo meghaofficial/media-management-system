@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { GoGrabber, GoPlus } from "react-icons/go";
+import { GoGrabber } from "react-icons/go";
+import type { FolderItem } from "../types";
 import FoldersPanel from "../panels/FoldersPanel";
 import ImagesPanel from "../panels/ImagesPanel";
 import DuplicatesPanel from "../panels/DuplicatesPanel";
@@ -9,18 +9,15 @@ const MIN = 40;
 const RESIZER = 6;
 
 export default function ResizablePanels() {
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // panel widths (px)
+  // UI BASED 
+  const containerRef = useRef<HTMLDivElement>(null);
   const folderW = useRef(0);
   const imageW = useRef(0);
   const duplicateW = useRef(0);
-
   const active = useRef<"folder" | "duplicate" | null>(null);
   const lastX = useRef(0);
-
   const [, force] = useState(0);
-
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -35,8 +32,6 @@ export default function ResizablePanels() {
     observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, []);
-
-  /* ---------- DRAG LOGIC (UNCHANGED) ---------- */
   useEffect(() => {
     const move = (e: MouseEvent) => {
       if (!active.current) return;
@@ -97,19 +92,39 @@ export default function ResizablePanels() {
       document.removeEventListener("mouseup", up);
     };
   }, []);
-
   const collapsed = (w: number) => w < 60;
+
+  // FUNCTIONALITY BASED
+  const [foldersList, setFoldersList] = useState<FolderItem[]>([
+    { id: 1, name: "Folder 1", no_of_images: 3, icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Young_girl_smiling_in_sunshine_%282%29.jpg/960px-Young_girl_smiling_in_sunshine_%282%29.jpg", size: "5KB" },
+    { id: 2, name: "Folder 2", no_of_images: 5, icon: "https://i0.wp.com/pixahive.com/wp-content/uploads/2021/02/An-Indian-boy-375075-pixahive.jpg?fit=1702%2C2560&ssl=1", size: "10MB" },
+    { id: 3, name: "Folder 3", no_of_images: 10, icon: "https://img.freepik.com/free-photo/close-up-portrait-handsome-smiling-young-man-white-t-shirt-blurry-outdoor-nature_176420-6305.jpg?semt=ais_user_personalization&w=740&q=80", size: "50KB" },
+    { id: 4, name: "Folder 4", no_of_images: 3, icon: "", size: "50MB" },
+    { id: 5, name: "Folder 5", no_of_images: 16, icon: "", size: "0KB" },
+    { id: 6, name: "Folder 6", no_of_images: 7, icon: "", size: "50KB" },
+  ]);
+  const [activeFolderID, setActiveFolderID] = useState<string | number | null>("");
 
   return (
     <div
       ref={containerRef}
       className="relative h-full w-full bg-[#0f1117] overflow-hidden"
     >
-      <Panel
+      {/* <Panel
         title="Collections"
         left={0}
         width={folderW.current}
         collapsed={collapsed(folderW.current)}
+      /> */}
+      <FoldersPanel 
+        title="Collections" 
+        left={0} 
+        width={folderW.current} 
+        collapsed={collapsed(folderW.current)} 
+        foldersList={foldersList} 
+        setFoldersList={setFoldersList} 
+        activeFolderID={activeFolderID} 
+        setActiveFolderID={setActiveFolderID} 
       />
 
       <Resizer
@@ -120,11 +135,22 @@ export default function ResizablePanels() {
         }}
       />
 
-      <Panel
+      {/* <Panel
         title="Images"
         left={folderW.current + RESIZER}
         width={imageW.current}
         collapsed={collapsed(imageW.current)}
+      /> */}
+
+      <ImagesPanel 
+        title="Images" 
+        left={folderW.current + RESIZER} 
+        width={imageW.current} 
+        collapsed={collapsed(imageW.current)} 
+        foldersList={foldersList} 
+        setFoldersList={setFoldersList} 
+        activeFolderID={activeFolderID} 
+        setActiveFolderID={setActiveFolderID} 
       />
 
       <Resizer
@@ -135,70 +161,26 @@ export default function ResizablePanels() {
         }}
       />
 
-      <Panel
+      {/* <Panel
         title="Duplicates"
         left={folderW.current + imageW.current + RESIZER * 2}
         width={duplicateW.current}
         collapsed={collapsed(duplicateW.current)}
-      />
+      /> */}
+
+      <DuplicatesPanel 
+        title="Duplicated" 
+        left={folderW.current + imageW.current + RESIZER * 2} 
+        width={duplicateW.current} 
+        collapsed={collapsed(duplicateW.current)} 
+        foldersList={foldersList} 
+        setFoldersList={setFoldersList} 
+        activeFolderID={activeFolderID} 
+        setActiveFolderID={setActiveFolderID} />
     </div>
   );
 }
 
-/* ---------- PANEL ---------- */
-function Panel({
-  title,
-  left,
-  width,
-  collapsed,
-}: {
-  title: string;
-  left: number;
-  width: number;
-  collapsed: boolean;
-}) {
-  return (
-    <div
-      className="absolute top-0 bottom-0 bg-[#191919] text-white overflow-hidden select-none"
-      style={{ left, width }}
-    >
-      <motion.div
-        className="absolute font-bold left-3 flex items-center justify-between w-[95%]"
-        animate={{
-          rotate: collapsed ? -90 : 0,
-          top: collapsed ? "50%" : "10px",
-        }}
-        transition={{ duration: 0.3 }}
-        style={{ transformOrigin: "left center" }}
-      >
-        <span>{title}</span>
-
-        {/* Add button for folders */}
-        {title === "Collections" && !collapsed && (
-          <div className="rounded bg-[#4ade80] hover:bg-[#4ade80]/80 cursor-pointer p-[5px] text-black hover:text-white">
-            <GoPlus />
-          </div>
-        )}
-
-      </motion.div>
-
-      <div className="w-full border-b-2 border-[#2a2a2a] absolute top-11"></div>
-
-      <motion.div
-        className="pt-14 px-4"
-        animate={{ opacity: collapsed ? 0 : 1 }}
-        transition={{ duration: 0.2 }}
-        style={{ pointerEvents: collapsed ? "none" : "auto" }}
-      >
-        {title === "Collections" && <FoldersPanel />}
-        {title === "Images" && <ImagesPanel />}
-        {title === "Duplicates" && <DuplicatesPanel />}
-      </motion.div>
-    </div>
-  );
-}
-
-/* ---------- RESIZER ---------- */
 function Resizer({
   left,
   onDown,
