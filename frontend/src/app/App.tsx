@@ -1,9 +1,9 @@
-import MainPage from "./layout/MainPage";
+import MainLayout from "./layout/MainLayout"
 
 const App = () => {
   return (
     <div>
-      <MainPage />
+      <MainLayout />
     </div>
   )
 }
