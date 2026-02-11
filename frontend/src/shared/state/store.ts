@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import searchReducer from "./slices/searchSlice";
 import themeReducer from "./slices/themeSlice"
+import imageReducer from "./slices/imageSlice";
 
 export const store = configureStore({
   reducer: {
     search: searchReducer,
-    theme: themeReducer
+    theme: themeReducer,
+    images: imageReducer
   }
 });
 

@@ -1,20 +1,17 @@
-type ImageItem = {
-  id: number;
-  name: string;
-  category: string;
-};
+import { useAppDispatch } from "../hooks/hooks";
+import { renameImage } from "../state/slices/imageSlice";
+import type { ImageItem } from "../types";
 
 type ImageCardProps = {
   img: ImageItem;
-  setImages: React.Dispatch<React.SetStateAction<ImageItem[]>>
 };
 
-const ImageCard = ({ img, setImages }: ImageCardProps) => {
+const ImageCard = ({ img }: ImageCardProps) => {
+
+  const dispatch = useAppDispatch();
 
   const renameImg = (id: number, newName: string) => {
-    setImages((prev) =>
-      prev.map((img) => (img.id === id ? { ...img, name: newName } : img))
-    );
+    dispatch(renameImage({ id, name: newName }));
   };
 
   return (
@@ -23,7 +20,7 @@ const ImageCard = ({ img, setImages }: ImageCardProps) => {
         className="relative group aspect-square rounded-4xl overflow-hidden bg-zinc-200 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all duration-500 hover:-translate-y-2 shadow-xl hover:shadow-brand/20"
       >
         <img
-          src={`https://picsum.photos/${img.id + 50}/600`}
+          src={URL.createObjectURL(img?.url)}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           alt={img.name}
         />

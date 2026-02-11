@@ -1,25 +1,9 @@
-import { useState } from "react";
 import { useAppSelector } from "../../shared/hooks/hooks";
 import ImageCard from "../../shared/components/ImageCard";
 
-type ImageItem = {
-  id: number;
-  name: string;
-  category: string;
-};
-
-const imageLibraryData: ImageItem[] = [
-  { id: 1, name: "Sunset_Vibes", category: "All Images" },
-  { id: 2, name: "Office_Setup", category: "Folders" },
-  { id: 3, name: "Portrait_01", category: "People" },
-  { id: 4, name: "Travel_Collection", category: "Collections" },
-  { id: 5, name: "Duplicate_IMG_99", category: "Duplicates" },
-  { id: 6, name: "Modern_Architecture", category: "Folders" },
-];
-
 const MediaPage = () => {
 
-  const [images, setImages] = useState<ImageItem[]>(imageLibraryData);
+  const images = useAppSelector((state) => state.images.value);
   const search = useAppSelector((state) => state.search.value);
 
   const filteredImages = images.filter((img) => {
@@ -30,12 +14,6 @@ const MediaPage = () => {
     return img.name.toLowerCase().includes(search.toLowerCase());
   });
 
-  // const renameImg = (id: number, newName: string) => {
-  //   setImages((prev) =>
-  //     prev.map((img) => (img.id === id ? { ...img, name: newName } : img))
-  //   );
-  // };
-
   return (
     <>
       <main className="flex-1 p-8 lg:p-12 min-h-screen">
@@ -44,14 +22,15 @@ const MediaPage = () => {
             All Images
           </h1>
           <p className="text-zinc-500 dark:text-zinc-400">
-            Click a name to rename; use the search to filter.
+            {/* Click a name to rename; use the search to filter. */}
+            Total - {images?.length}
           </p>
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
           {filteredImages.map((img) => (
             <div key={img.id}>
-              <ImageCard img={img} setImages={setImages} />
+              <ImageCard img={img} />
             </div>
             // <div
             //   key={img.id}
