@@ -1,7 +1,7 @@
 import { useAppSelector } from "../../shared/hooks/hooks";
-import ImageCard from "../../shared/components/ImageCard";
+import ImageCard from "./ImageCard";
 import { MdOutlineImageNotSupported } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ImageItem } from "../../shared/types";
 
 const MediaPage = () => {
@@ -17,6 +17,8 @@ const MediaPage = () => {
     // return matchesSearch && matchesCategory;
     return img.name.toLowerCase().includes(search.toLowerCase());
   });
+
+  const handleSelectAll = () => {}
 
   return (
     <>

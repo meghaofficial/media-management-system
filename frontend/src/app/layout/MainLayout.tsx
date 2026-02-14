@@ -17,19 +17,6 @@ export default function MainLayout() {
       document.documentElement.classList.toggle("dark", theme !== "light");
   }, [theme]);
 
-  // const filteredImages = images.filter((img) => {
-  //   const matchesSearch = img.name.toLowerCase().includes(search.toLowerCase());
-  //   const matchesCategory =
-  //     currentCategory === "All Images" || img.category === currentCategory;
-  //   return matchesSearch && matchesCategory;
-  // });
-
-  // const renameImg = (id: number, newName: string) => {
-  //   setImages((prev) =>
-  //     prev.map((img) => (img.id === id ? { ...img, name: newName } : img))
-  //   );
-  // };
-
   return (
     <div className="bg-[#fafafa] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 transition-colors duration-500 font-sans antialiased">
       <Topbar />

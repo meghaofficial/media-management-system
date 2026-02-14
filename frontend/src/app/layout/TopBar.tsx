@@ -4,7 +4,6 @@ import { setSearch } from "../../shared/state/slices/searchSlice";
 import { setTheme } from "../../shared/state/slices/themeSlice";
 import { IoMdSearch } from "react-icons/io";
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
-import { v4 as uuidv4 } from 'uuid';
 import { setImages } from "../../shared/state/slices/imageSlice";
 
 const Topbar = () => {
@@ -31,7 +30,7 @@ const Topbar = () => {
       id: Date.now() + Math.random(),
       name: `Image-${index + 1}`,
       category: "",
-      url: img
+      url: URL.createObjectURL(img)
     }));
     dispatch(setImages([...images, ...arr]));
     setProgress(0);
