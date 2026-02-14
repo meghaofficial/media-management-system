@@ -13,8 +13,8 @@ export const imageSlice = createSlice({
   name: "images",
   initialState,
   reducers: {
-    addImages: (state, action: PayloadAction<ImageItem[]>) => {
-      state.value.push(...action.payload);
+    setImages: (state, action: PayloadAction<ImageItem[]>) => {
+      state.value = action.payload;
     },
     renameImage: (
       state,
@@ -26,8 +26,13 @@ export const imageSlice = createSlice({
         image.name = name;
       }
     },
+    removeImage: (state, action: PayloadAction<number | string>) => {
+      state.value = state.value.filter(
+        (img) => img.id.toString() !== action.payload.toString(),
+      );
+    },
   },
 });
 
-export const { addImages, renameImage } = imageSlice.actions;
+export const { setImages, renameImage, removeImage } = imageSlice.actions;
 export default imageSlice.reducer;

@@ -1,5 +1,5 @@
 export type ImageItem = {
-  id: number;
+  id: number | string;
   name: string;
   category: string;
   url: File

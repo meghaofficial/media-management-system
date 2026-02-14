@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks/hooks";
-import { addImages } from "../../shared/state/slices/imageSlice";
 import { setSearch } from "../../shared/state/slices/searchSlice";
 import { setTheme } from "../../shared/state/slices/themeSlice";
 import { IoMdSearch } from "react-icons/io";
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
+import { v4 as uuidv4 } from 'uuid';
+import { setImages } from "../../shared/state/slices/imageSlice";
 
 const Topbar = () => {
 
@@ -27,9 +28,12 @@ const Topbar = () => {
 
     const imageArray = Array.from(files);
     const arr = imageArray.map((img, index) => ({
-      id: index + 1, name: `Image-${index + 1}`, category: "", url: img
+      id: Date.now() + Math.random(),
+      name: `Image-${index + 1}`,
+      category: "",
+      url: img
     }));
-    dispatch(addImages(arr));
+    dispatch(setImages([...images, ...arr]));
     setProgress(0);
   };
 
