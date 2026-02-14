@@ -3,14 +3,15 @@ import { useAppDispatch, useAppSelector } from "../../shared/hooks/hooks";
 import { removeImage, renameImage } from "../../shared/state/slices/imageSlice";
 import type { ImageItem } from "../../shared/types";
 import { useEffect, useState } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 type ImageCardProps = {
   img: ImageItem;
+  isSelected: boolean;
+  setSelectedImages: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-const ImageCard = ({ img }: ImageCardProps) => {
+const ImageCard = ({ img, isSelected, setSelectedImages }: ImageCardProps) => {
 
   const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
@@ -37,23 +38,41 @@ const ImageCard = ({ img }: ImageCardProps) => {
   const handlePrev = () => {
     const currIdx = images?.findIndex(im => im?.id === currImg?.id);
     if (currIdx > 0)
-        setCurrImg(images[currIdx+-1]);
+      setCurrImg(images[currIdx + -1]);
   }
 
   const handleForward = () => {
     const currIdx = images?.findIndex(im => im?.id === currImg?.id);
     if (currIdx < images?.length)
-        setCurrImg(images[currIdx+1]);
+      setCurrImg(images[currIdx + 1]);
   };
 
   return (
     <>
       <div className="relative" onClick={() => setOpen(true)}>
-        <div className="bg-zinc-800 h-5 w-5 flex items-center z-9 justify-center rounded-full cursor-pointer absolute right-2 top-2" onClick={() => dispatch(removeImage(img?.id?.toString()))}>
+        <input
+          type="checkbox"
+          onClick={(e) => e.stopPropagation()}
+          className="absolute z-9 top-3 left-3 cursor-pointer"
+          checked={isSelected}
+          onChange={() => {
+            setSelectedImages(prev => (
+              prev?.includes(img?.id?.toString()) ? prev?.filter(id => id !== img?.id?.toString()) : [...prev, img?.id?.toString()]
+            ))
+          }}
+        />
+        <div className="bg-zinc-800 text-white h-5 w-5 flex items-center z-9 justify-center rounded-full cursor-pointer absolute right-2 top-2" onClick={() => {
+          setSelectedImages(prev =>
+            prev.includes(img?.id?.toString())
+              ? prev.filter(id => id !== img?.id?.toString())
+              : [...prev, img?.id?.toString()]
+          );
+          dispatch(removeImage(img?.id?.toString()));
+        }}>
           <RxCross2 />
         </div>
         <div
-          className="relative group aspect-square rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all duration-500 hover:-translate-y-2 shadow-xl hover:shadow-brand/20"
+          className="relative group aspect-square rounded-xl overflow-hidden bg-zinc-200 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 transition-all duration-500 shadow-xl hover:shadow-brand/20"
         >
           <img
             src={img?.url}
@@ -78,7 +97,7 @@ const ImageCard = ({ img }: ImageCardProps) => {
         <>
           <div
             className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
-            // onClick={handleClose}
+          // onClick={handleClose}
           >
             <IoChevronBack size={50} className="cursor-pointer" onClick={handlePrev} />
             <div
